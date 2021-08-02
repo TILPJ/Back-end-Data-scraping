@@ -2,13 +2,15 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
+
 # from clipper.nomad import get_courses as get_nomad_courses
 # from clipper.course_save import save as course_save
 
 
-
 def index(request):
     return HttpResponse("성공!")
+
+
 # def nomad(request):
 #     print("노마드")
 #     nomad_courses = get_nomad_courses()

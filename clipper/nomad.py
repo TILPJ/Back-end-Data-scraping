@@ -11,16 +11,16 @@ from requests.compat import urljoin
 from bs4 import BeautifulSoup
 import re
 from clipper.chromer import get_soup_from_page
+
 # constants
 BASE_URL = "https://nomadcoders.co/"
 COURSES_URL = urljoin(BASE_URL, "/courses")
 CHALLENGES_URL = urljoin(BASE_URL, "/challenges")
-WAIT = 5 # seconds
+WAIT = 5  # seconds
 
 
 def extract_courses(cards):
-    
-    
+
     course_info = []
 
     counter = 1
@@ -58,12 +58,12 @@ def extract_course(card):
     chapter_list = extract_chapter_list(course_link)
 
     return {
-        "title" : title,
-        "thumbnail_link" : thumbnail_link,
-        "description" : description,
-        "instructor" : instructor,
-        "course_link" : course_link,
-        "chapter_list" : chapter_list
+        "title": title,
+        "thumbnail_link": thumbnail_link,
+        "description": description,
+        "instructor": instructor,
+        "course_link": course_link,
+        "chapter_list": chapter_list,
     }
 
 
@@ -71,26 +71,24 @@ def extract_course(card):
 def extract_chapter_list(link):
     button_xpath = "//button[contains(text(),'See all')]"
     soup = get_soup_from_page(link, button_xpath=button_xpath)
-    curriculum = soup.find('div', string=re.compile("curriculum", re.I))
-    chapters = curriculum.parent.find_all('span', string=re.compile("#[0-9][^.][^.]"))
-    
+    curriculum = soup.find("div", string=re.compile("curriculum", re.I))
+    chapters = curriculum.parent.find_all("span", string=re.compile("#[0-9][^.][^.]"))
+
     chapter_list = []
     for chapter in chapters:
         chapter_name = chapter.get_text()
-        
+
         section_list = []
         for section in chapter.parent.select("button"):
             section_list.append(section.select_one("span").get_text())
-        
-        chapter_list.append({
-                "chapter" : chapter_name,
-                "section_list" : section_list
-            })
-        
+
+        chapter_list.append({"chapter": chapter_name, "section_list": section_list})
+
     return chapter_list
 
+
 def get_courses():
-    
+
     # 이제 soup로 본격적인 스크래이핑 작업에 들어간다.
     soup = get_soup_from_page(COURSES_URL)
     # card가 담긴 태그

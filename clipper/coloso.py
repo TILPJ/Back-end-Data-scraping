@@ -10,10 +10,11 @@ import time
 import re
 import pprint
 from clipper.chromer import get_soup_from_page
+
 ### constants ###
 
 BASE_URL = "https://coloso.co.kr/"
-WAIT = 10 # seconds
+WAIT = 10  # seconds
 
 
 def extract_courses(cat_url):
@@ -25,17 +26,20 @@ def extract_courses(cat_url):
     # //section[.//*[contains(text(), "모든 클래스")]]
     # 의 형제들 중 두 번째 section 엘리먼트
     # /following-sibling::section[2]
-    target_xpath = '//section[.//*[contains(text(), "모든 클래스")]]/following-sibling::section[2]' \
-         '| //*[contains(@class, "catalog-title")]/following-sibling::ul'
+    target_xpath = (
+        '//section[.//*[contains(text(), "모든 클래스")]]/following-sibling::section[2]'
+        '| //*[contains(@class, "catalog-title")]/following-sibling::ul'
+    )
     soup = get_soup_from_page(cat_url, target_xpath=target_xpath)
-    
+
     courses_info = []
-    for card in soup.find_all('li', class_=re.compile("[^info]")):
-        course = extract_course(card)        
+    for card in soup.find_all("li", class_=re.compile("[^info]")):
+        course = extract_course(card)
         print(".", end="")
         courses_info.append(course)
-    
+
     return courses_info
+
 
 def extract_course(card):
     try:
@@ -51,69 +55,69 @@ def extract_course(card):
         instructor = card.find_all(string=re.compile("."))[-1]
     except Exception:
         instructor = "-"
-        
-    course_link = card.find('a')["href"]
+
+    course_link = card.find("a")["href"]
     course_link = urljoin(BASE_URL, course_link)
     print(course_link)
-    description, chapter_list = extract_details(course_link)    
+    description, chapter_list = extract_details(course_link)
 
-    return {'title': title,
-            'thumbnail_link': thumbnail_link,
-            'description': description,
-            'instructor': str(instructor).strip(),
-            'course_link': course_link,
-            'chapter_list': chapter_list
-            }
+    return {
+        "title": title,
+        "thumbnail_link": thumbnail_link,
+        "description": description,
+        "instructor": str(instructor).strip(),
+        "course_link": course_link,
+        "chapter_list": chapter_list,
+    }
+
 
 def extract_details(link):
     soup = get_soup_from_page(link)
     try:
-        description = soup.find('div', class_="fc-card__text").get_text(strip=True)
+        description = soup.find("div", class_="fc-card__text").get_text(strip=True)
     except Exception:
         description = "-"
-    
+
     chapter_list = []
-    for chapter in soup.select('ol'):
+    for chapter in soup.select("ol"):
         try:
             chapter_title = chapter.parent.p.get_text(strip=True)
         except Exception:
             chapter_title = "-"
-        
+
         section_list = []
-        for section in chapter.find_all('li'):
+        for section in chapter.find_all("li"):
             try:
                 section_title = section.get_text(strip=True)
             except Exception:
                 section_title = "-"
             section_list.append(section_title)
-        
-        chapter_list.append({
-            'chapter': chapter_title,
-            'section_list': section_list                 
-            })
-            
+
+        chapter_list.append({"chapter": chapter_title, "section_list": section_list})
+
     if not chapter_list:
         try:
             parts = soup.find_all(string=re.compile("^PART"))
-            sections = soup.find_all('ul', class_='container__cards')
+            sections = soup.find_all("ul", class_="container__cards")
         except Exception as e:
             print(e)
-            
+
         for part, section in zip(parts, sections):
             section_list = section.find_all(string=re.compile("^SECTION"))
-            chapter_list.append({
-                'chapter': str(part).strip(),
-                'section_list': section_list
-                })
-    
+            chapter_list.append(
+                {"chapter": str(part).strip(), "section_list": section_list}
+            )
+
     return description, chapter_list
+
 
 # 먼저 카테고리를 추출한다.
 def get_categories(soup):
     href_list = []
     for ele in soup:
-        href_list.append(urljoin(BASE_URL, ele['href']))
+        href_list.append(urljoin(BASE_URL, ele["href"]))
     return href_list
+
 
 def get_courses():
     # 옵션설정 및 리턴값 초기화
@@ -123,13 +127,14 @@ def get_courses():
     # //*[@id="__layout"]/header/div/nav/div/div[3]/ul/li[3]/a
     mouse_xpath = '//*[@id="nav-menu-2"]'
     target_xpath = '//*[@id="nav-menu-2"]/..'
-    soup = get_soup_from_page(BASE_URL, target_xpath=target_xpath, mouse_xpath=mouse_xpath)
-    category_links = soup.find('ul').find_all('a')
+    soup = get_soup_from_page(
+        BASE_URL, target_xpath=target_xpath, mouse_xpath=mouse_xpath
+    )
+    category_links = soup.find("ul").find_all("a")
     category_links = get_categories(category_links)
     print(category_links)
 
-
-    for category in category_links: 
+    for category in category_links:
         print("")
         print(category)
         courses = extract_courses(category)
