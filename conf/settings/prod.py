@@ -4,7 +4,7 @@ import dj_database_url
 
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["tilup-release-v1.herokuapp.com"]
 
 STATIC_ROOT = BASE_DIR / "static"
 
