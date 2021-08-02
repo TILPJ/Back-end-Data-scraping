@@ -144,6 +144,6 @@ cython_debug/
 .vscode
 
 # 추가해야 할 것들 
-# settings.data.py
-# commands.txt
-# requirements.data.txt
+settings_data.py
+commands.txt
+requirements_data.txt

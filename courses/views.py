@@ -92,7 +92,9 @@ class MySiteList(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, fotmat=None):
-        sites = MyCourse.objects.filter(owner=request.user).distinct("site")
+        sites = MyCourse.objects.filter(owner=request.user)
+        if sites:
+            sites = sites.distinct("site")
         serializer = MySiteSerializer(sites, many=True)
         res = jsend.success(data={"mysites": serializer.data})
         return Response(res)

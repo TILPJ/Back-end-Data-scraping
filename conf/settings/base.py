@@ -55,7 +55,11 @@ PROJECT_APPS = [
     "tils.apps.TilsConfig",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
+SCRAPING_PROJECT_APPS = [
+    "clipper.apps.ClipperConfig",
+]
+
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + SCRAPING_PROJECT_APPS
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
