@@ -4,7 +4,7 @@ import re
 
 from dotenv import load_dotenv
 load_dotenv() # secret_key 불러오기 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conf.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conf.settings.prod")
 import django
 django.setup()
 
