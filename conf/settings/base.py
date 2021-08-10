@@ -159,6 +159,12 @@ GRAPH_MODELS = {
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
+
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "accounts.serializers.UserDetailSerializer",
     "LOGIN_SERIALIZER": "accounts.serializers.LoginSerializer",
