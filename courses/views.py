@@ -111,6 +111,13 @@ class MyCourseList(GenericAPIView):
         return Response(res)
 
     def post(self, request, format=None):
+        site_id = request.data.get("site")
+        course_id = request.data.get("course")
+        # 학습 카드 중복 등록 제거
+        if MyCourse.objects.filter(site_id=site_id, course_id=course_id):
+            res = jsend.fail(data={"detail": _("This is already registered.")})
+            return Response(res)
+
         serializer = MyCourseSerializer(data=request.data)
         if serializer.is_valid() == False:
             res = jsend.fail(data=serializer.errors)
@@ -145,6 +152,13 @@ class MyCourseDetail(GenericAPIView):
             mycourse = self.get_object(mycourse_id)
         except:
             res = jsend.fail(data={"detail": _("This is not a registered")})
+            return Response(res)
+        
+        site_id = request.data.get("site")
+        course_id = request.data.get("course")
+        # 학습 카드 중복 등록 제거
+        if MyCourse.objects.filter(site_id=site_id, course_id=course_id):
+            res = jsend.fail(data={"detail": _("This is already registered.")})
             return Response(res)
 
         serializer = MyCourseSerializer(mycourse, data=request.data)
