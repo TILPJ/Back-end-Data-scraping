@@ -17,12 +17,16 @@ class TilSerializer(serializers.ModelSerializer):
     )
     course_title = serializers.SerializerMethodField()
     section_name = serializers.SerializerMethodField()
+    site_name = serializers.SerializerMethodField()
 
     def get_course_title(self, obj):
         return obj.mycourse.course.title
 
     def get_section_name(self, obj):
         return obj.section.name
+
+    def get_site_name(self, obj):
+        return obj.mycourse.site.name
 
     class Meta:
         model = Til
@@ -34,6 +38,7 @@ class TilSerializer(serializers.ModelSerializer):
             "section",
             "star",
             "memo",
+            "site_name",
             "course_title",
             "section_name",
         ]
