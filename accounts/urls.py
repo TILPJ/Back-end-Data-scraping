@@ -1,5 +1,5 @@
 from django.urls import path
-
+from django.conf.urls import url
 from rest_auth.views import (
     UserDetailsView,
 )
@@ -14,7 +14,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("api/email/check/", UserCheck.as_view(), name="rest_email_check"),
+    url(r"email/check$", UserCheck.as_view(), name="rest_email_check"),
     path("api/login/", LoginView.as_view(), name="rest_login"),
     path("api/logout/", LogoutView.as_view(), name="rest_logout"),
     path("api/email/find/", FindEmailView.as_view(), name="find_email"),
