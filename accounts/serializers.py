@@ -10,17 +10,9 @@ from .models import CustomUser
 
 
 class UserCheckSerializer(serializers.ModelSerializer):
-    email_check = serializers.SerializerMethodField()
-
-    def get_email_check(self, instance):
-        if instance:
-            return True
-        else:
-            return False
-
     class Meta:
         model = CustomUser
-        fields = ["email_check"]
+        fields = ["email"]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

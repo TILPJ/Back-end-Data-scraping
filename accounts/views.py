@@ -25,6 +25,7 @@ from .serializers import (
 
 @api_view(["GET"])
 def api_root(request, format=None):
+    """ DRF, Root Page 참조 """
     return Response(
         {
             "email_check": reverse("rest_email_check", request=request, format=format),
@@ -49,16 +50,14 @@ def api_root(request, format=None):
 
 
 class UserCheck(APIView):
-    """ 회원 여부 체크    """
+    """ 회원 여부 체크 """
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
         """ email을 입력받아 user가 존재하는지 체크 """
 
-        _email = request.query_params.get('email')
-        _email = CustomUser.objects.filter(email=_email)
-
-        if not _email:
+        # Query Param Check
+        if not request.query_params:
             return Response(
                 data={
                     'desc': 'query_param does not exist'
@@ -66,10 +65,20 @@ class UserCheck(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serializer = UserCheckSerializer(_email)
+        # Validate Email
+        serializer = UserCheckSerializer(data=request.query_params)
+
+        if serializer.is_valid(raise_exception=False):
+            # 요청된 이메일이 유효하지 않을 때
+            return Response(
+                data={
+                    'desc': 'Email does not exist'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         return Response(
-            data=serializer.data,
+            data={'desc': 'true'},
             status=status.HTTP_200_OK
         )
 
