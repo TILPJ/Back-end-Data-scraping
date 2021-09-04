@@ -29,7 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 DJANGO_APPS = [
@@ -95,17 +94,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "conf.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd9ac35bt0fgv5b',
+        'USER': 'ngtngodcwszcoo',
+        'PASSWORD': '19c0a2ff918bb54029b26b4da3e3aa4620e0964c4575209ee5bccdfc23f650df',
+        'HOST': 'ec2-44-194-54-123.compute-1.amazonaws.com',
+        'PORT': 5432,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -125,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -138,7 +139,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -196,3 +196,30 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 CORS_ORIGIN_ALLOW_ALL = True
 
 DATE_INPUT_FORMAT = ["%d-%m-%Y"]
+
+from os.path import join
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'sqlhandler': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'sqlformatter'
+        }
+
+    },
+    'formatters': {
+        'sqlformatter': {
+            '()': 'sqlformatter.SqlFormatter',
+            'format': '%(levelname)s %(message)s',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['sqlhandler'],
+            'level': 'DEBUG',
+        },
+    }
+}

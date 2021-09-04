@@ -4,8 +4,6 @@ from django.contrib.auth import login as django_login, logout as django_logout
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import response
-from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view
@@ -13,9 +11,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import GenericAPIView
-
-from allauth.account import app_settings as allauth_settings
-from rest_auth.app_settings import TokenSerializer
 
 from rest_auth.views import LoginView, LogoutView, PasswordChangeView
 from rest_auth.registration.views import RegisterView
@@ -53,20 +48,30 @@ def api_root(request, format=None):
     )
 
 
-# 회원 여부 체크
 class UserCheck(APIView):
+    """ 회원 여부 체크    """
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
-        if not self.request.query_params:
-            res = jsend.fail(data={"message": "Please enter your email"})
-            return Response(res)
+        """ email을 입력받아 user가 존재하는지 체크 """
 
-        email_param = self.request.query_params.get("email", default="")
-        email = CustomUser.objects.filter(email=email_param)
-        serializer = UserCheckSerializer(email)
-        res = jsend.success(data=serializer.data)
-        return Response(res)
+        _email = request.query_params.get('email')
+        _email = CustomUser.objects.filter(email=_email)
+
+        if not _email:
+            return Response(
+                data={
+                    'desc': 'query_param does not exist'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = UserCheckSerializer(_email)
+
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK
+        )
 
 
 # 로그인
